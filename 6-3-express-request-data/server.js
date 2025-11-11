@@ -116,7 +116,7 @@ app.listen(3000, ()=> console.log("API running at http://localhost:3000"));
 app.get("/echo", (req,res)=>{
    const {name, age} = req.query;
    if (!name || !age){
-      return res.status(400).json({ ok:false, error:"userId must be positive number" })
+      return res.status(400).json({ ok:false, error:"name & age required" })
    }
    else{
       return res.json({ ok:true, name, age, msg:"Hello <name>, you are <age>" })
@@ -130,7 +130,16 @@ app.get("/profile/:first/:last", (req,res)=>{
 });
 
 // Route param middleware example: /users/42
-
+app.param("userId", (req,res,next,userId)=>{ 
+   const userNumber = Number(userId);
+   if (userNumber < 0){
+      return res.status(400).json({ ok:false, error:"userId must be positive number" })
+   }
+   else{
+      req.userIdNum = userNumber;
+      next();
+   }
+});
 
 // Route params: /users/:userId route
 app.get("/users/:userId", (req,res)=>{
